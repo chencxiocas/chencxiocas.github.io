@@ -66,19 +66,58 @@
     <div class="container container-center">
       <div class="row">
         <div class="col-md-8">
-          <div class="well">
-            <h3 id="personal-webpage">个人博客 personal webpage</h3>
+          <div class="article">
+            <div class="well">
+              <h1><a href="http://chencxiocas.github.io/2015/10/02/images.html">Images</a></h1>
+              <div class="post-meta">
+                <div class="post-time">
+                  <i class="fa fa-calendar"></i>
+                  <time>02 Oct 2015</time>
+                </div>
+                <ul>
+                  
+                    <li><a href="http://chencxiocas.github.io/tag/images">images</a></li>
+                  
+                    <li><a href="http://chencxiocas.github.io/tag/jekyll">jekyll</a></li>
+                  
+                </ul>
+              </div>
+              <div class="post-content">
+                <div id="toc" class="toc"></div>
+                <h2 id="introduction">Introduction</h2>
 
-<p>博客内容包括：</p>
+<p>This theme supports two types of images:</p>
 
 <ul>
-  <li>天然地震学相关的软件使用</li>
-  <li>数据的三维可视化程序</li>
-  <li>船载地球物理甲板处理程序包开发</li>
-  <li>地球科学科普类文章</li>
-  <li>科幻小说连载</li>
+  <li>inline images: <img src="http://chencxiocas.github.io/images/batWid1.png" alt="Battery Widget" /></li>
 </ul>
 
+<figure class="highlight"><pre><code class="language-html" data-lang="html">![Battery Widget]({{ site.url | append:site.baseurl }}/images/batWid1.png)</code></pre></figure>
+
+<ul>
+  <li>centered images with caption (optionally):</li>
+</ul>
+
+<p><img src="http://chencxiocas.github.io/images/iphone_landscape.PNG" alt="screenshot" class="center-image" /><em>iPhone 5 landscape</em></p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html">![screenshot]({{ site.baseurl | prepend:site.url}}/images/iphone_landscape.PNG){: .center-image }*iPhone 5 landscape*</code></pre></figure>
+
+<p>You can apply your own styles to image by creating css class with style:</p>
+
+<figure class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.custom-image</span>
+<span class="p">{</span>
+<span class="err">//</span> <span class="err">your</span> <span class="err">style</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>And then applying your style just after the image in curly brackets with colon:</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html">[!image](path to image){:.custom-image}
+ </code></pre></figure>
+
+
+              </div>
+              
+            </div>
           </div>
         </div>
         <div class="col-md-4 hidden-xs">
@@ -121,6 +160,8 @@
         </div>
       </div>
     </div>
+    
+
   </div>
       <footer class="footer-distributed">
       <div class="container">
