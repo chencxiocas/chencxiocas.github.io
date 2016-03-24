@@ -4,11 +4,11 @@ title: About
 
 ---
 
-### Dark version of jekyll-clean theme
+### 个人博客 personal webpage
 
-This theme was created on top of Jekyll Clean theme by Scotte, you can view the originnal version in action [on his blog](https://scotte.github.io).
-
-* Get it from [github](https://github.com/streetturtle/jekyll-clean-dark).
-* See the [live demo](http://pavelmakhov.com/jekyll-clean-dark).
-* See it [in action on my own blog](http://pavelmakhov.com).
-
+博客内容包括：
+- 天然地震学相关的软件使用
+- 数据的三维可视化程序
+- 船载地球物理甲板处理程序包开发
+- 地球科学科普类文章
+- 科幻小说连载
