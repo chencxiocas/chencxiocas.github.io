@@ -30,7 +30,7 @@ yandex_metrica:
 disqus: chencxiocas
 comments: true
 
-#permalink: /:year/:month/:title
+permalink: /:year/:month/:title
 
 # Enable for using pages, more details are here: http://jekyllrb.com/docs/pagination/
 gems: [jekyll-paginate]
