@@ -9,7 +9,7 @@ url: http://chencxiocas.github.io
 
 # For a project page here should be a project name. Otherwise (for user's/organizaion's page leave it empty)
 #baseurl: '/jekyll-clean-dark'
-baseurl: ''
+baseurl:
 
 social:
   github: chencxiocas
@@ -35,7 +35,7 @@ permalink: /:year/:month/:title
 
 # Enable for using pages, more details are here: http://jekyllrb.com/docs/pagination/
 gems: [jekyll-paginate]
-paginate: 3
+paginate: 10
 
 #highlighter: rouge
 
