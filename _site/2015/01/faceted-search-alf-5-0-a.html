@@ -1,0 +1,550 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#222222" />
+
+  <title>Chuanxu Chen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="http://chencxiocas.github.io/js/jquery.min.js"></script>
+  <script src="http://chencxiocas.github.io/js/bootstrap.min.js"></script>
+  <script src="http://chencxiocas.github.io/js/header.js"></script>
+  <link href="http://chencxiocas.github.io/css/bootstrap.min.css" rel="stylesheet">
+  <link href="http://chencxiocas.github.io/css/theme.css" rel="stylesheet">
+  <link href="http://chencxiocas.github.io/css/syntax.css" rel="stylesheet">
+  <link href="http://chencxiocas.github.io/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu+Mono&subset=latin">
+
+</head>
+
+<body>
+
+  
+
+  
+
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: {
+      families: ['Ubuntu::latin']
+    }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="http://chencxiocas.github.io/">Chuanxu Chen</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="http://chencxiocas.github.io/">/home</a></li>
+          <li><a href="http://chencxiocas.github.io/archive.html">/archive</a></li>
+          <li><a href="http://chencxiocas.github.io/tags.html">/tags</a></li>
+          <li><a href="http://chencxiocas.github.io/about.html">/about</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+<div class="wrapper">
+  <div class="content">
+    <div class="container container-center">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="article">
+            <div class="well">
+              <h2><a href="http://chencxiocas.github.io/2015/01/faceted-search-alf-5-0-a">Custom facets in alfresco 5.0.a</a></h2>
+              <div class="post-meta">
+                <div class="post-time">
+                  <i class="fa fa-calendar"></i>
+                  <time>20 Jan 2015</time>
+                </div>
+                <ul>
+                  
+                    <li><a href="http://chencxiocas.github.io/tag/alfresco">alfresco</a></li>
+                  
+                    <li><a href="http://chencxiocas.github.io/tag/faceted-search">faceted-search</a></li>
+                  
+                </ul>
+              </div>
+              <div class="post-content">
+                <p>In the project I’m working on I had a task to add custom facets to the search. Since version 5.0.a is the first one which supports faceted search the support for custom facets wasn’t there, at least I couldn’t find it. It seems that in further version of alfresco it is in place, but in the project I’m working on we had a strict requirement to use 5.0.a version. The solution I discovered is a bit “dirty” because instead of overriding the facet cofiguraion component using aikau framework I just overwritten it. Another negative point is that it prbably won’t work with further Alfresco versions, so you’ll need to update the code. But hopefully adding new facets would be easier in latest versions so this change won’t be to big.<br />
+Let’s start!<br />
+All the changes are done in share project.</p>
+
+<h2 id="register-extension">Register extension</h2>
+
+<p>Create file: <code class="highlighter-rouge">/web-extension/site-data/extensions/com/yourcomp/faceted-search-custom.xml</code> file with following context:</p>
+
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;extension&gt;</span>
+  <span class="nt">&lt;modules&gt;</span>
+    <span class="nt">&lt;module&gt;</span>
+      <span class="nt">&lt;id&gt;</span>EP faceted search<span class="nt">&lt;/id&gt;</span>
+      <span class="nt">&lt;auto-deploy&gt;</span>true<span class="nt">&lt;/auto-deploy&gt;</span>
+      <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+      <span class="nt">&lt;customizations&gt;</span>
+        <span class="nt">&lt;customization&gt;</span>
+          <span class="nt">&lt;targetPackageRoot&gt;</span>
+            org.alfresco.share.pages.faceted-search
+          <span class="nt">&lt;/targetPackageRoot&gt;</span>
+          <span class="nt">&lt;sourcePackageRoot&gt;</span>
+            com.yourcomp.pages.faceted-search
+          <span class="nt">&lt;/sourcePackageRoot&gt;</span>
+        <span class="nt">&lt;/customization&gt;</span>
+      <span class="nt">&lt;/customizations&gt;</span>
+    <span class="nt">&lt;/module&gt;</span>
+  <span class="nt">&lt;/modules&gt;</span>
+<span class="nt">&lt;/extension&gt;</span></code></pre></figure>
+
+<p>Please note that <code class="highlighter-rouge">&lt;auto-deploy&gt;true&lt;/auto-deploy&gt;</code> allows to automatically deploy created module instead of manually deploy it each time after you purge database.</p>
+
+<p>##Extension implementation##</p>
+
+<p>Next step is overwrite <code class="highlighter-rouge">faceted-search.get.js</code>. Copy it to <code class="highlighter-rouge">web-extension/site-webscripts/com/yourcomp/pages/faceted-search/</code> and scroll down to ~120 line where the <code class="highlighter-rouge">facets</code> array is constructed. Feels free to remove some facets or to add new ones, in my case I added custom metadata field, which refers to the type of document:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">...</span>
+<span class="nl">id</span><span class="p">:</span> <span class="s2">"FCTSRCH_FACET_DOCUMENT_TYPE"</span><span class="p">,</span>
+    <span class="nx">name</span><span class="err">:</span> <span class="s2">"alfresco/search/FacetFilters"</span><span class="p">,</span>
+    <span class="nx">config</span><span class="err">:</span> <span class="p">{</span>
+      <span class="nl">label</span><span class="p">:</span> <span class="s2">"Document Type"</span><span class="p">,</span>
+      <span class="nx">facetQName</span><span class="err">:</span> <span class="s2">"{http://www.mycompname.com/model/efiles/1.0}typeName.__.u"</span><span class="p">,</span>
+      <span class="nx">sortBy</span><span class="err">:</span> <span class="s2">"ALPHABETICALLY"</span><span class="p">,</span>
+      <span class="nx">hitThreshold</span><span class="err">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nx">minFilterValueLength</span><span class="err">:</span> <span class="mi">5</span><span class="p">,</span>
+      <span class="nx">maxFilters</span><span class="err">:</span> <span class="mi">10</span><span class="p">,</span>
+      <span class="nx">useHash</span><span class="err">:</span> <span class="kc">false</span>
+    <span class="p">}</span>
+<span class="p">...</span></code></pre></figure>
+
+<p>To check the config parameters refer to the documentation: <a href="http://dev.alfresco.com/resource/docs/jsdoc-haiku/FacetFilters.html">FacetFilfters config parameters</a>.</p>
+
+<p>In my case the document type name is several words split by space. To make solr search for the whole phrase and create whole prhase facet you need to add this part <code class="highlighter-rouge">.__.u</code> to the facet Qname. And also make sure that tokenised in the content model is set to <code class="highlighter-rouge">false</code> or <code class="highlighter-rouge">both</code>, so that the string is not tokenised before being indexed:</p>
+
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"ef:typeName"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;type&gt;</span>d:mltext<span class="nt">&lt;/type&gt;</span>
+  <span class="nt">&lt;mandatory&gt;</span>true<span class="nt">&lt;/mandatory&gt;</span>
+  <span class="nt">&lt;index</span> <span class="na">enabled=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;atomic&gt;</span>true<span class="nt">&lt;/atomic&gt;</span>
+    <span class="nt">&lt;stored&gt;</span>false<span class="nt">&lt;/stored&gt;</span>
+    <span class="nt">&lt;tokenised&gt;</span>both<span class="nt">&lt;/tokenised&gt;</span>
+  <span class="nt">&lt;/index&gt;</span>
+<span class="nt">&lt;/property&gt;</span></code></pre></figure>
+
+
+              </div>
+              
+
+              
+              <div id="disqus_thread">
+                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 hidden-xs">
+          <div class="sidebar ">
+  
+    <h2>Related By Tags</h2>
+  
+  <ul>
+    
+    
+      
+      
+        
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2014/12/automatic-site-creation">Automatic site creation</a></li>
+            
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/02/connect-to-alfresco-db">Connect to alfresco database</a></li>
+            
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2014/10/alf-custom-doclibrary-site-page">Custom document library site page</a></li>
+            
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/03/customize-drag-and-drop-pop-up">Customize drag-and-drop component</a></li>
+            
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/02/enable-read-event-for-rm-audit">Enable document view event for RM audit</a></li>
+            
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+    
+      
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2014/12/pass-env-from-command-line">Set environment from command line</a></li>
+            
+          
+        
+          
+        
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/05/usefule-alfresco-queries">Some useful Alfresco queries</a></li>
+            
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/01/wipe-alfresco-database">Wipe alfresco database</a></li>
+            
+          
+        
+          
+        
+      
+        
+          
+        
+          
+        
+      
+    
+  </ul>
+</div>
+
+<div class="sidebar">
+  <h2>Tags</h2>
+  <ul class="sideBarTags">
+     
+      <li><a href="/tag/alfresco">alfresco</a></li>
+    
+      <li><a href="/tag/alfresco RM">alfresco RM</a></li>
+    
+      <li><a href="/tag/alfresco share">alfresco share</a></li>
+    
+      <li><a href="/tag/analytics">analytics</a></li>
+    
+      <li><a href="/tag/audit">audit</a></li>
+    
+      <li><a href="/tag/awesome wm">awesome wm</a></li>
+    
+      <li><a href="/tag/code">code</a></li>
+    
+      <li><a href="/tag/comments">comments</a></li>
+    
+      <li><a href="/tag/database">database</a></li>
+    
+      <li><a href="/tag/faceted-search">faceted-search</a></li>
+    
+      <li><a href="/tag/images">images</a></li>
+    
+      <li><a href="/tag/jekyll">jekyll</a></li>
+    
+      <li><a href="/tag/regex">regex</a></li>
+    
+      <li><a href="/tag/tags">tags</a></li>
+    
+      <li><a href="/tag/ubuntu">ubuntu</a></li>
+    
+  </ul>
+</div>
+
+        </div>
+      </div>
+    </div>
+    
+<!-- Add Disqus comments. -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = "chencxiocas"; // required: replace example with your forum shortname
+  var disqus_identifier = "/2015/01/faceted-search-alf-5-0-a";
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  </div>
+      <footer class="footer-distributed">
+      <div class="container">
+        <div class="footer">
+          <p>Chuanxu Chen &copy; 2016</p>
+          <h6>Follow me</h6>
+
+<ul class="social-media">
+
+    
+    <li>
+        <a title="chencxiocas on Github"
+            href="https://github.com/chencxiocas"
+            target="_blank"><i class="fa fa-github fa-2x"></i></a>
+    </li>
+    
+
+    
+    <li>
+        <a title=" on StackOverflow"
+            href="http://stackoverflow.com/users/1252056/"
+            target="_blank"><i class="fa fa-stack-overflow fa-2x"></i></a>
+    </li>
+    
+
+    
+
+    
+
+
+    
+    <li>
+        <a title=" on Instagram"
+            href="https://instagram.com/"
+            target="_blank"><i class="fa fa-instagram fa-2x"></i></a>
+    </li>
+    
+
+
+    
+    <li>
+        <a title=" on LastFm"
+            href="http://lastfm.com/user/"
+            target="_blank"><i class="fa fa-lastfm fa-2x"></i></a>
+    </li>
+    
+
+    
+    <li>
+        <a title="feed.xml RSS"
+            href="http://chencxiocas.github.io/feed.xml"
+            target="_blank"><i class="fa fa-rss fa-2x"></i></a>
+    </li>
+    
+
+</ul>
+
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+</div>

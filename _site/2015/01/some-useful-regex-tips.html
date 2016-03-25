@@ -1,0 +1,476 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#222222" />
+
+  <title>Chuanxu Chen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="http://chencxiocas.github.io/js/jquery.min.js"></script>
+  <script src="http://chencxiocas.github.io/js/bootstrap.min.js"></script>
+  <script src="http://chencxiocas.github.io/js/header.js"></script>
+  <link href="http://chencxiocas.github.io/css/bootstrap.min.css" rel="stylesheet">
+  <link href="http://chencxiocas.github.io/css/theme.css" rel="stylesheet">
+  <link href="http://chencxiocas.github.io/css/syntax.css" rel="stylesheet">
+  <link href="http://chencxiocas.github.io/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu+Mono&subset=latin">
+
+</head>
+
+<body>
+
+  
+
+  
+
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: {
+      families: ['Ubuntu::latin']
+    }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="http://chencxiocas.github.io/">Chuanxu Chen</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="http://chencxiocas.github.io/">/home</a></li>
+          <li><a href="http://chencxiocas.github.io/archive.html">/archive</a></li>
+          <li><a href="http://chencxiocas.github.io/tags.html">/tags</a></li>
+          <li><a href="http://chencxiocas.github.io/about.html">/about</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+<div class="wrapper">
+  <div class="content">
+    <div class="container container-center">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="article">
+            <div class="well">
+              <h2><a href="http://chencxiocas.github.io/2015/01/some-useful-regex-tips">Some useful regex tips</a></h2>
+              <div class="post-meta">
+                <div class="post-time">
+                  <i class="fa fa-calendar"></i>
+                  <time>31 Jan 2015</time>
+                </div>
+                <ul>
+                  
+                    <li><a href="http://chencxiocas.github.io/tag/regex">regex</a></li>
+                  
+                </ul>
+              </div>
+              <div class="post-content">
+                <h2 id="comments">Comments</h2>
+
+<p>Usually regular expressions are very long and could be almost unreadable. Even if you wrote it by yourself sometime ago. In such cases comments are very useful. To use it you need to turn on <a href="http://www.regular-expressions.info/freespacing.html">free-spacing mode</a> by adding <code class="highlighter-rouge">x</code> modifier to your expression. Comment starts with a hashtag <code class="highlighter-rouge">#</code>. Let’s parse date in this format: YYYY/MM/DD (year should be between 1000 and 2012 and assume all months have 30 days).</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">(</span>1<span class="se">\d</span><span class="o">{</span>3<span class="o">}</span>|20<span class="o">(</span>0<span class="se">\d</span>|1[0-2]<span class="o">))</span><span class="se">\/</span><span class="o">(</span>0[1-9]|1[0-2]<span class="o">)</span><span class="se">\/</span><span class="o">(</span>0[1-9]|[012]<span class="se">\d</span>|30<span class="o">)</span></code></pre></figure>
+
+<p>And the same regex with comments:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">(</span>1<span class="se">\d</span><span class="o">{</span>3<span class="o">}</span>          <span class="c"># 1000-1999</span>
+|                <span class="c"># or</span>
+20<span class="o">(</span>0<span class="se">\d</span>|1[0-2]<span class="o">))</span>  <span class="c"># 20 (01-09 or 10-12)</span>
+<span class="se">\/</span>               <span class="c"># slash, months after</span>
+<span class="o">(</span>0[1-9]          <span class="c"># 01-09</span>
+|                <span class="c"># or     </span>
+1[0-2]<span class="o">)</span>          <span class="c"># 10-12 </span>
+<span class="se">\/</span>               <span class="c"># slash, days after</span>
+<span class="o">(</span>0[1-9]          <span class="c"># 01-09</span>
+|                <span class="c"># or</span>
+<span class="o">[</span>12]<span class="se">\d</span>           <span class="c"># 10-29</span>
+|                <span class="c"># or </span>
+30<span class="o">)</span>              <span class="c"># 30</span></code></pre></figure>
+
+<h2 id="lookahead-assertions">Lookahead assertions</h2>
+
+<p>Sometimes it’s needed to match something which is followed by something else. But not include this following something else in the match. For such cases <strong>lookahead</strong> assertion is what you need. There are two types of lookahead assertion:</p>
+
+<ul>
+  <li>positive <code class="highlighter-rouge">(?=regex)</code> - matches only if it is followed by regex</li>
+  <li>negative <code class="highlighter-rouge">(?!regex)</code> - matches if it is followed NOT by regex</li>
+</ul>
+
+<p>Let’s have a look on a simple example.</p>
+
+<p>Let’s say you have a list of files:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">file.sass
+file.xml
+index.html
+model.xml
+model.properties
+contentModel.xml</code></pre></figure>
+
+<p>and you want to find all names of xml files but do not include the <em>.xml</em> part. Of course you can use simple pattern <code class="highlighter-rouge">^[a-z]+\.xml$</code> but then the <em>.xml</em> part will be included in the match. To have only filename use this pattern: <code class="highlighter-rouge">^[a-z]+(?=.xml$)</code>.</p>
+
+<p>Some explanation:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">^       <span class="c">#beginning of the line</span>
+<span class="o">[</span>a-z]+  <span class="c">#file name - one or more letters</span>
+<span class="o">(</span>?<span class="o">=</span>     <span class="c">#assertion declaration</span>
+.xml<span class="nv">$)</span>  <span class="c">#part which should be after the filename</span></code></pre></figure>
+
+<p>You can play with it here: <a href="https://regex101.com/r/tK4lU3/1">https://regex101.com/r/tK4lU3/1</a></p>
+
+<p>Result would be following:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">file
+model
+contentModel</code></pre></figure>
+
+<h2 id="lookbehind-assertions">Lookbehind assertions</h2>
+
+<p>Lookbehind assertion works the same way but looks before the current match. And there are two types of it as well: positive <code class="highlighter-rouge">(?&lt;=regex)</code> and negative <code class="highlighter-rouge">(?&lt;!regex)</code>.</p>
+
+<p>Almost the same example, but now let’s find all the file extensions we have for filename <em>model</em>. <br />
+Pattern for it would be: <code class="highlighter-rouge">(?&lt;=^model\.)[a-z]+$</code> and the result:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">xml
+properties</code></pre></figure>
+
+<h2 id="if-then-else-conditions">If-then-else conditions</h2>
+
+<p>To check some conditions regular expressions provide this functionality. The syntax is  <code class="highlighter-rouge">(?(?=regex)then|else)</code> or if you don’t have <em>else</em> just <code class="highlighter-rouge">(?(?=regex)then)</code>.</p>
+
+              </div>
+              
+
+              
+              <div id="disqus_thread">
+                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 hidden-xs">
+          <div class="sidebar ">
+  
+    <h2>Related By Tags</h2>
+  
+  <ul>
+    
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+    
+      
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+  </ul>
+</div>
+
+<div class="sidebar">
+  <h2>Tags</h2>
+  <ul class="sideBarTags">
+     
+      <li><a href="/tag/alfresco">alfresco</a></li>
+    
+      <li><a href="/tag/alfresco RM">alfresco RM</a></li>
+    
+      <li><a href="/tag/alfresco share">alfresco share</a></li>
+    
+      <li><a href="/tag/analytics">analytics</a></li>
+    
+      <li><a href="/tag/audit">audit</a></li>
+    
+      <li><a href="/tag/awesome wm">awesome wm</a></li>
+    
+      <li><a href="/tag/code">code</a></li>
+    
+      <li><a href="/tag/comments">comments</a></li>
+    
+      <li><a href="/tag/database">database</a></li>
+    
+      <li><a href="/tag/faceted-search">faceted-search</a></li>
+    
+      <li><a href="/tag/images">images</a></li>
+    
+      <li><a href="/tag/jekyll">jekyll</a></li>
+    
+      <li><a href="/tag/regex">regex</a></li>
+    
+      <li><a href="/tag/tags">tags</a></li>
+    
+      <li><a href="/tag/ubuntu">ubuntu</a></li>
+    
+  </ul>
+</div>
+
+        </div>
+      </div>
+    </div>
+    
+<!-- Add Disqus comments. -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = "chencxiocas"; // required: replace example with your forum shortname
+  var disqus_identifier = "/2015/01/some-useful-regex-tips";
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  </div>
+      <footer class="footer-distributed">
+      <div class="container">
+        <div class="footer">
+          <p>Chuanxu Chen &copy; 2016</p>
+          <h6>Follow me</h6>
+
+<ul class="social-media">
+
+    
+    <li>
+        <a title="chencxiocas on Github"
+            href="https://github.com/chencxiocas"
+            target="_blank"><i class="fa fa-github fa-2x"></i></a>
+    </li>
+    
+
+    
+    <li>
+        <a title=" on StackOverflow"
+            href="http://stackoverflow.com/users/1252056/"
+            target="_blank"><i class="fa fa-stack-overflow fa-2x"></i></a>
+    </li>
+    
+
+    
+
+    
+
+
+    
+    <li>
+        <a title=" on Instagram"
+            href="https://instagram.com/"
+            target="_blank"><i class="fa fa-instagram fa-2x"></i></a>
+    </li>
+    
+
+
+    
+    <li>
+        <a title=" on LastFm"
+            href="http://lastfm.com/user/"
+            target="_blank"><i class="fa fa-lastfm fa-2x"></i></a>
+    </li>
+    
+
+    
+    <li>
+        <a title="feed.xml RSS"
+            href="http://chencxiocas.github.io/feed.xml"
+            target="_blank"><i class="fa fa-rss fa-2x"></i></a>
+    </li>
+    
+
+</ul>
+
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+</div>

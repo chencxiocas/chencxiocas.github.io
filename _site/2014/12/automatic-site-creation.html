@@ -1,0 +1,490 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#222222" />
+
+  <title>Chuanxu Chen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="http://chencxiocas.github.io/js/jquery.min.js"></script>
+  <script src="http://chencxiocas.github.io/js/bootstrap.min.js"></script>
+  <script src="http://chencxiocas.github.io/js/header.js"></script>
+  <link href="http://chencxiocas.github.io/css/bootstrap.min.css" rel="stylesheet">
+  <link href="http://chencxiocas.github.io/css/theme.css" rel="stylesheet">
+  <link href="http://chencxiocas.github.io/css/syntax.css" rel="stylesheet">
+  <link href="http://chencxiocas.github.io/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu+Mono&subset=latin">
+
+</head>
+
+<body>
+
+  
+
+  
+
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: {
+      families: ['Ubuntu::latin']
+    }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="http://chencxiocas.github.io/">Chuanxu Chen</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="http://chencxiocas.github.io/">/home</a></li>
+          <li><a href="http://chencxiocas.github.io/archive.html">/archive</a></li>
+          <li><a href="http://chencxiocas.github.io/tags.html">/tags</a></li>
+          <li><a href="http://chencxiocas.github.io/about.html">/about</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+<div class="wrapper">
+  <div class="content">
+    <div class="container container-center">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="article">
+            <div class="well">
+              <h2><a href="http://chencxiocas.github.io/2014/12/automatic-site-creation">Automatic site creation</a></h2>
+              <div class="post-meta">
+                <div class="post-time">
+                  <i class="fa fa-calendar"></i>
+                  <time>01 Dec 2014</time>
+                </div>
+                <ul>
+                  
+                    <li><a href="http://chencxiocas.github.io/tag/alfresco">alfresco</a></li>
+                  
+                </ul>
+              </div>
+              <div class="post-content">
+                <p>Usually when you develop some new features for Alfresco quite often you need to completely clean the project and purge database. Which is not so good since you will loose all manually created things such us folders, users or sites. With sites it could be quite complicate to manually recreate them. In this post I’ll to show how to create sites automatically using webscript. So instead of creating sites one by one, manually insert names and privacy settings you’ll just need to call a webscript. And also with this method you could be sure that all your sites are in place.</p>
+
+<p>I found few tutorials on how to do this, but some of them were too complicated, some just didn’t work. First thing which probably could do the work is <code class="highlighter-rouge">siteService</code> in repo project. But the problem with it that it only creates site on repo side. So share wouldn’t know anything about it. Another approach which worked for me is to use <code class="highlighter-rouge">create-site</code> webscript. It is a POST webscript, so you’ll need to pass all the site parameters to it.</p>
+
+<h2 id="create-a-webscript-description">Create a webscript description:</h2>
+
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;webscript&gt;</span>
+  <span class="nt">&lt;shortname&gt;</span>Sites creation<span class="nt">&lt;/shortname&gt;</span>
+  <span class="nt">&lt;description&gt;</span>This webscript creates sites<span class="nt">&lt;/description&gt;</span>
+  <span class="nt">&lt;url&gt;</span>/org/init/create-sites<span class="nt">&lt;/url&gt;</span>
+  <span class="nt">&lt;authentication&gt;</span>admin<span class="nt">&lt;/authentication&gt;</span>
+  <span class="nt">&lt;lifecycle&gt;</span>draft_public_api<span class="nt">&lt;/lifecycle&gt;</span>
+<span class="nt">&lt;/webscript&gt;</span></code></pre></figure>
+
+<h2 id="implement-the-webscript">Implement the webscript.</h2>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="k">try</span> <span class="o">{</span>
+  <span class="n">HttpClient</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpClient</span><span class="o">();</span>
+  <span class="n">String</span> <span class="n">createSiteUrl</span> <span class="o">=</span> <span class="n">UrlUtil</span><span class="o">.</span><span class="na">getShareUrl</span><span class="o">(</span><span class="n">sysAdminParams</span><span class="o">)</span> <span class="o">+</span> <span class="s">"/service/modules/create-site"</span><span class="o">;</span>
+
+  <span class="n">JSONObject</span> <span class="n">site1</span> <span class="o">=</span> <span class="n">prepareSite</span><span class="o">(</span><span class="s">"someTitle"</span><span class="o">,</span> <span class="s">"someShortName"</span><span class="o">,</span> <span class="s">"someDescription"</span><span class="o">,</span> <span class="s">"site-dashboard"</span><span class="o">);</span>
+  <span class="n">JSONObject</span> <span class="n">site2</span> <span class="o">=</span> <span class="n">prepareSite</span><span class="o">(</span><span class="s">"anotherTitle"</span><span class="o">,</span> <span class="s">"anotherShortName"</span><span class="o">,</span> <span class="s">"anotherDescription"</span><span class="o">,</span> <span class="s">"site-dashboard"</span><span class="o">);</span>
+
+  <span class="c1">// Login to share</span>
+  <span class="n">String</span> <span class="n">loginUrl</span> <span class="o">=</span> <span class="n">UrlUtil</span><span class="o">.</span><span class="na">getShareUrl</span><span class="o">(</span><span class="n">sysAdminParams</span><span class="o">)</span> <span class="o">+</span> <span class="s">"/page/dologin"</span><span class="o">;</span>
+  <span class="n">String</span> <span class="n">adminUserName</span> <span class="o">=</span> <span class="n">AuthenticationUtil</span><span class="o">.</span><span class="na">getAdminUserName</span><span class="o">();</span>
+  <span class="n">makePostCall</span><span class="o">(</span><span class="n">client</span><span class="o">,</span> <span class="n">loginUrl</span><span class="o">,</span> <span class="s">"username="</span> <span class="o">+</span> <span class="n">adminUserName</span> <span class="o">+</span> <span class="s">"&amp;password="</span> <span class="o">+</span> <span class="n">ADMIN_PASSWORD</span><span class="o">,</span> <span class="n">CONTENT_TYPE_FORM</span><span class="o">);</span>
+
+  <span class="c1">// Create sites</span>
+  <span class="n">makePostCall</span><span class="o">(</span><span class="n">client</span><span class="o">,</span> <span class="n">createSiteUrl</span><span class="o">,</span> <span class="n">site1</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span> <span class="n">CONTENT_TYPE_JSON</span><span class="o">,</span> <span class="n">getToken</span><span class="o">(</span><span class="n">client</span><span class="o">));</span>
+  <span class="n">makePostCall</span><span class="o">(</span><span class="n">client</span><span class="o">,</span> <span class="n">createSiteUrl</span><span class="o">,</span> <span class="n">site2</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span> <span class="n">CONTENT_TYPE_JSON</span><span class="o">,</span> <span class="n">getToken</span><span class="o">(</span><span class="n">client</span><span class="o">));</span>
+      
+<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+<span class="o">}</span></code></pre></figure>
+
+<h2 id="csrf-policy">CSRF Policy</h2>
+
+<p>In the latest versions of Alfresco (4+ versions) developers introduced CSRF Policy, more details here: <a href="http://blogs.alfresco.com/wp/ewinlof/2013/03/11/introducing-the-new-csrf-filter-in-alfresco-share/">Introducing the CSRFPolicy in Alfresco Share</a>. For this site creation method it means that you’ll need to pass one more parameter in post request header which you can get from <code class="highlighter-rouge">HTTPClient</code> after login.</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">private</span> <span class="n">String</span> <span class="nf">getToken</span><span class="p">(</span><span class="n">HttpClient</span> <span class="n">client</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">UnsupportedEncodingException</span><span class="o">{</span>
+  <span class="n">Cookie</span><span class="o">[]</span> <span class="n">cookies</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">getState</span><span class="o">().</span><span class="na">getCookies</span><span class="o">();</span>
+  <span class="k">for</span> <span class="o">(</span><span class="n">Cookie</span> <span class="n">cookie</span> <span class="o">:</span> <span class="n">cookies</span><span class="o">){</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">cookie</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="s">"Alfresco-CSRFToken"</span><span class="o">)){</span>
+      <span class="k">return</span> <span class="n">URLDecoder</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">cookie</span><span class="o">.</span><span class="na">getValue</span><span class="o">(),</span> <span class="s">"UTF-8"</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+  <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>Please also notice that token you get is encoded, so you need to decode it:</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">URLDecoder</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">cookie</span><span class="o">.</span><span class="na">getValue</span><span class="o">(),</span> <span class="s">"UTF-8"</span><span class="o">);</span></code></pre></figure>
+
+<p>Done! So now you’ll just need to run the webscript by going to <a href="http://localhost:8080/alfresco/service/org/init/create-sites">http://localhost:8080/alfresco/service/org/init/create-sites</a> and your site is created.</p>
+
+<h2 id="some-problems">Some problems</h2>
+
+<p>For the moment there is one problem with this method which I still cannot resolve. For some reason the first post reqest of site creation is ignored. So in my example only one site will be created.</p>
+
+<p>Working project you can find on my <a href="https://github.com/streetturtle/Alfresco/tree/master/AutomaticSiteCreation">github</a>.</p>
+
+
+              </div>
+              
+
+              
+              <div id="disqus_thread">
+                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 hidden-xs">
+          <div class="sidebar ">
+  
+    <h2>Related By Tags</h2>
+  
+  <ul>
+    
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/02/connect-to-alfresco-db">Connect to alfresco database</a></li>
+            
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2014/10/alf-custom-doclibrary-site-page">Custom document library site page</a></li>
+            
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/01/faceted-search-alf-5-0-a">Custom facets in alfresco 5.0.a</a></li>
+            
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/03/customize-drag-and-drop-pop-up">Customize drag-and-drop component</a></li>
+            
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/02/enable-read-event-for-rm-audit">Enable document view event for RM audit</a></li>
+            
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+    
+      
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2014/12/pass-env-from-command-line">Set environment from command line</a></li>
+            
+          
+        
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/05/usefule-alfresco-queries">Some useful Alfresco queries</a></li>
+            
+          
+        
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+        
+      
+    
+      
+      
+        
+          
+            <li><a href="http://chencxiocas.github.io/2015/01/wipe-alfresco-database">Wipe alfresco database</a></li>
+            
+          
+        
+      
+        
+          
+        
+      
+    
+  </ul>
+</div>
+
+<div class="sidebar">
+  <h2>Tags</h2>
+  <ul class="sideBarTags">
+     
+      <li><a href="/tag/alfresco">alfresco</a></li>
+    
+      <li><a href="/tag/alfresco RM">alfresco RM</a></li>
+    
+      <li><a href="/tag/alfresco share">alfresco share</a></li>
+    
+      <li><a href="/tag/analytics">analytics</a></li>
+    
+      <li><a href="/tag/audit">audit</a></li>
+    
+      <li><a href="/tag/awesome wm">awesome wm</a></li>
+    
+      <li><a href="/tag/code">code</a></li>
+    
+      <li><a href="/tag/comments">comments</a></li>
+    
+      <li><a href="/tag/database">database</a></li>
+    
+      <li><a href="/tag/faceted-search">faceted-search</a></li>
+    
+      <li><a href="/tag/images">images</a></li>
+    
+      <li><a href="/tag/jekyll">jekyll</a></li>
+    
+      <li><a href="/tag/regex">regex</a></li>
+    
+      <li><a href="/tag/tags">tags</a></li>
+    
+      <li><a href="/tag/ubuntu">ubuntu</a></li>
+    
+  </ul>
+</div>
+
+        </div>
+      </div>
+    </div>
+    
+<!-- Add Disqus comments. -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = "chencxiocas"; // required: replace example with your forum shortname
+  var disqus_identifier = "/2014/12/automatic-site-creation";
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+  </div>
+      <footer class="footer-distributed">
+      <div class="container">
+        <div class="footer">
+          <p>Chuanxu Chen &copy; 2016</p>
+          <h6>Follow me</h6>
+
+<ul class="social-media">
+
+    
+    <li>
+        <a title="chencxiocas on Github"
+            href="https://github.com/chencxiocas"
+            target="_blank"><i class="fa fa-github fa-2x"></i></a>
+    </li>
+    
+
+    
+    <li>
+        <a title=" on StackOverflow"
+            href="http://stackoverflow.com/users/1252056/"
+            target="_blank"><i class="fa fa-stack-overflow fa-2x"></i></a>
+    </li>
+    
+
+    
+
+    
+
+
+    
+    <li>
+        <a title=" on Instagram"
+            href="https://instagram.com/"
+            target="_blank"><i class="fa fa-instagram fa-2x"></i></a>
+    </li>
+    
+
+
+    
+    <li>
+        <a title=" on LastFm"
+            href="http://lastfm.com/user/"
+            target="_blank"><i class="fa fa-lastfm fa-2x"></i></a>
+    </li>
+    
+
+    
+    <li>
+        <a title="feed.xml RSS"
+            href="http://chencxiocas.github.io/feed.xml"
+            target="_blank"><i class="fa fa-rss fa-2x"></i></a>
+    </li>
+    
+
+</ul>
+
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+</div>
