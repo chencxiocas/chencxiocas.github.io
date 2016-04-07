@@ -87,7 +87,7 @@ ul.social-media {
   text-align: center;
   padding: 0 0 10px 0; }
   ul.social-media li {
-    display: inline-block; }
+    display: inline; }
   ul.social-media li > a {
     width: 45px;
     height: 45px;
@@ -96,7 +96,7 @@ ul.social-media {
     -ms-transition: color 0.2s;
     -o-transition: color 0.2s;
     transition: color 0.2s;
-    display: inline-block;
+    display: inline;
     color: white; }
     ul.social-media li > a:hover {
       color: #3CA2A2; }
