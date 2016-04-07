@@ -19,6 +19,14 @@ social:
   lastfm: ''
   rss: feed.xml
 
+share: true
+  facebook: true
+  twitter: true
+  gplus: true
+  linkedin: true
+  pinterest:
+  email: true
+
 # Google Analytics key, leave blank to ignore
 google_analytics_key:
 # Yandex metrika (https://metrica.yandex.com/) leave blank to ignore or put true to use
