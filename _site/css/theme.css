@@ -81,7 +81,7 @@ a {
 
 a:hover {
   color: #3CA2A2;
-  border-bottom: 5px solid transparent; }
+  border-bottom: 1px solid transparent; }
 
 ul.social-media {
   text-align: center;
