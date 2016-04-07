@@ -19,7 +19,7 @@ social:
   lastfm: ''
   rss: feed.xml
 
-share: true
+share:
   facebook: true
   twitter: true
   gplus: true
