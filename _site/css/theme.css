@@ -89,8 +89,8 @@ ul.social-media {
   ul.social-media li {
     display: inline-block; }
   ul.social-media li > a {
-    width: 5px;
-    height: 5px;
+    width: 45px;
+    height: 45px;
     -webkit-transition: color 0.2s;
     -moz-transition: color 0.2s;
     -ms-transition: color 0.2s;
