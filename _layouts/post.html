@@ -22,7 +22,6 @@
               <div class="post-content">
                 {{ content }}
               </div>
-              {% include share.html %}
               {% if page.comments %}
               <div id="disqus_thread">
                 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
@@ -34,6 +33,7 @@
         </div>
         <div class="col-md-4 hidden-xs">
           {% include sidebar.html %}
+          {% include share.html %}
         </div>
       </div>
     </div>
