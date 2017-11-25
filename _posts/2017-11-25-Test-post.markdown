@@ -1,0 +1,71 @@
+---
+layout: post
+title: "Test new post publish"
+date: 2017-11-25 15:48:30
+comments: true
+description: Here I am trying to create a new page for the personal blog
+categories:
+tags:
+- Blog
+---
+## Linux 文本处理命令
+---
+> 1.用awk或者是cut 把指定的字段（用一定的分隔符分隔的字段）赋值给某个变量 
+
+```
+ variable=`awk '{print $n}' filename` 
+```
+> 2.用sed输出满足条件的两行之间的内容
+
+```
+sed -n '/> NE, NOBS, NS  754  168/,$p' raypath_754 | sed '1d' | awk '{print $4,$5}' >slab_depth.txt
+```
+> 3.awk if `else if` else 语句
+
+```
+cat event.lst | awk '{if($4=="N"&&$6=="E"){printf"%18.1f%10.3f%10.3f%5d%5.1f\n",$2,$5,$3,$7,$8} else if($4=="N"&&$6=="W"){printf"%18.1f%10.3f%10.3f%5d%5.1f\n",$2,$5-360.0,$3,$7,$8} else if($4=="S"&&$6=="E"){printf"%18.1f%10.3f%10.3f%5d%5.1f\n",$2,$5,-$3,$7,$8} else {printf"%18.1f%10.3f%10.3f%5d%5.1f\n", $2,$5-360.0,-$3,$7,$8}}' >event_format.lst
+```
+
+>4.终端快捷键
+
+```
+1. 移动光标快捷键
+ctrl+f 向前移动一个字符
+ctrl+b 向后移动一个字符
+alt+f 向前移动一个单词
+alt+b 向后移动一个单词
+ctrl+a 移动到当前行首
+ctrl+e 移动到当前行尾
+ctrl+l 清屏，并在屏幕最上面开始一个新行
+2. 编辑命令行快捷键
+ctrl+d 删除当前的字符
+ctrl+t 交换当前字符和前一个字符的位置
+alt+t 交换当前单词和前一个单词的位置
+alt+u 把当前单词变成大写
+alt+l 把当前单词变成小写
+alt+c 把当前单词变成首字母大写的单词
+ctrl+v 添加一个特殊字符，例如，要添加一个制表符，按ctrl+v+tab
+3. 剪切、粘贴快捷键
+ctrl+k 剪切文本直到行的末尾
+ctrl+u 剪切文本直到行的起始
+ctrl+w 剪切光标前的单词
+alt+d 剪切光标后的单词
+ctrl+y 粘贴最近剪切的文本
+alt+y 回退到先前剪切的文本并粘贴它
+ctrl+c 删除整行
+```
+
+>5.查看文件夹大小
+
+```
+du -sh * | sort -n
+```
+
+>6.左补齐格式
+```
+%04d
+```
+>7 .  bash 中 $$指示内容
+
+$$
+脚本自身的进程ID.这个变量经常用来构造一个"unique"的临时文件名.
