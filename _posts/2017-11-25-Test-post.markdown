@@ -6,7 +6,7 @@ comments: true
 description: Here I am trying to create a new page for the personal blog
 categories: Jekyll update
 tags:
-- Blog
+- alfresco
 ---
 
 ## Linux 文本处理命令
