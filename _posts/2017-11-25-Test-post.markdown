@@ -4,10 +4,11 @@ title: "Test new post publish"
 date: 2017-11-25 15:48:30
 comments: true
 description: Here I am trying to create a new page for the personal blog
-categories:
+categories: Jekyll update
 tags:
 - Blog
 ---
+
 ## Linux 文本处理命令
 ---
 > 1.用awk或者是cut 把指定的字段（用一定的分隔符分隔的字段）赋值给某个变量 
